@@ -16,7 +16,7 @@
 
 
 Name:           check-create-certificate
-Version:        0.2
+Version:        0.3
 Release:        0
 License:        GPLv2
 Group:          Productivity/Networking/System
@@ -50,7 +50,9 @@ Authors:
 
 %install
     mkdir -p ${RPM_BUILD_ROOT}/usr/sbin
-    cp -a script/%{name} ${RPM_BUILD_ROOT}/usr/sbin
+    install -m 755 script/%{name} ${RPM_BUILD_ROOT}/usr/sbin/
+    mkdir -p ${RPM_BUILD_ROOT}/%{_docdir}/%{name}
+    install -m 644 COPYING ${RPM_BUILD_ROOT}/%{_docdir}/%{name}/
 
 %clean
     rm -rf ${RPM_BUILD_ROOT}
@@ -59,3 +61,5 @@ Authors:
 %files
 %defattr(-,root,root)
 %attr(0755,root,root) /usr/sbin/%{name}
+%dir %{_docdir}/%{name}
+%doc %{_docdir}/%{name}/*

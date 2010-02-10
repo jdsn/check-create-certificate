@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Feb 10 21:11:17 CET 2010 - jdsn@suse.de
+
+- adding license file and license header (bnc#578209)
+- 0.3 
+
+-------------------------------------------------------------------
 Mon Feb  8 19:34:24 CET 2010 - jdsn@suse.de
 
 - fix script name in header comment
