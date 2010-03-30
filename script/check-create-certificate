@@ -185,7 +185,7 @@ if (defined $create)
         my $ok = 1;
         foreach my $F (($certfile, $keyfile, $combinedfile))
         {
-            if ( -e $F )
+            if ( defined $F  &&  -e $F )
             {
                 print STDERR "File already exists: $F\n";
                 $ok = 0; 
@@ -208,7 +208,7 @@ if (defined $create)
     {
         next unless (defined $H);
         chomp $H;
-        $hostname = $H unless ( $H !~ /^$/ && $H !~ /^linux$/i  && $H !~ /^localhost$/i );
+        $hostname = $H unless ( $H =~ /^$/ || $H =~ /^linux$/i  || $H =~ /^localhost$/i );
     }
     $hostname = 'localhost' unless ( defined $hostname && $hostname !~ /^$/ );
 

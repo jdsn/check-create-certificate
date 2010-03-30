@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 30 12:37:22 CEST 2010 - jdsn@suse.de
+
+- fix hostname identification (bnc#592217)
+- 0.4
+
+-------------------------------------------------------------------
 Wed Feb 10 21:11:17 CET 2010 - jdsn@suse.de
 
 - adding license file and license header (bnc#578209)
