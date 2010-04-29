@@ -16,7 +16,7 @@
 
 
 Name:           check-create-certificate
-Version:        0.4
+Version:        0.5
 Release:        0
 License:        GPLv2
 Group:          Productivity/Networking/System

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # check-create-certificate: Create a self-signed 2048 bit RSA SSL certificate if it does not exist yet
-# Copyright (C) 2009  J. Daniel Schmidt <jdsn@suse.de>
+# Copyright (C) 2009,2010  J. Daniel Schmidt <jdsn@suse.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
 use strict;
 use Getopt::Long qw(:config no_ignore_case);;
 use File::Basename;
-
+# set umask to securely create certificate files
+umask 0177;
 
 sub usage
 {
@@ -39,6 +40,7 @@ sub usage
     print STDERR "                              if omitted exitance of certificate files will only be checked\n";
     print STDERR "  -f [--force]                force to overwrite certificate\n";
     print STDERR "  -h [--help]                 this help\n";
+    print STDERR "  -v [--verbose]              show status messages (by default no output will be printed)\n";
     print STDERR "  -H [--hostname]     <name>  defines hostname to use as CN for certificate\n";
     print STDERR "                              if omitted it will use the FQDN hostname or just the hostname or the default CN\n";
     print STDERR "  -D [--defaultcn]    <name>  defines the default CN that is used if no FQDN can be found\n";
@@ -96,13 +98,7 @@ emailAddress = root\@$fqdn
         print STDERR "Could not create temporary files. Aborting.\n";
         return 0;
     }
-
-    my @chmodcmdcnf  = ("chmod", "644", "$CNF");
-    my @chmodcmdkey  = ("chmod", "600", "$KEY");
-    my @chmodcmdcert = ("chmod", "644", "$CERT");
-    system( @chmodcmdcnf );
-    system( @chmodcmdkey );
-    system( @chmodcmdcert );
+    system( ("chmod", "644", "$CERT") );
 
     open(CONF, ">$CNF");
     print CONF $config;
@@ -121,11 +117,7 @@ emailAddress = root\@$fqdn
         # create combined file if requested
         if ( defined $COMBINEDFILE )
         {
-            my @touchcom = ("touch", "$COMBINEDFILE");
-            my @chmodcom = ("chmod", "600", "$COMBINEDFILE");
             my $combine  = "cat $KEY $CERT > $COMBINEDFILE";
-            system(@touchcom);
-            system(@chmodcom);
             system($combine);
             $COMBINEDPATH = dirname($COMBINEDFILE);
         }
@@ -151,9 +143,10 @@ emailAddress = root\@$fqdn
 
 ################################# MAIN ########################################
 
-my ($create, $force, $hostname, $certfile, $keyfile, $combinedfile, $help, $organization, $unit, $defaultcn);
+my ($create, $force, $verbose, $hostname, $certfile, $keyfile, $combinedfile, $help, $organization, $unit, $defaultcn);
 my $result = GetOptions ("create|c"         => \$create,
                          "force|f"          => \$force,
+                         "verbose|v"        => \$verbose,
                          "hostname|H=s"     => \$hostname,
                          "defaultcn|D=s"    => \$defaultcn,
                          "organization|O=s" => \$organization,
@@ -187,13 +180,13 @@ if (defined $create)
         {
             if ( defined $F  &&  -e $F )
             {
-                print STDERR "File already exists: $F\n";
+                print "File already exists: $F\n" if $verbose;
                 $ok = 0; 
             }
         }
         unless ( $ok == 1 )
         {
-            print STDERR "Please use --force to overwrite.\n";
+            print "Please use --force to overwrite.\n" if $verbose;
             exit 1;
         }
     }
@@ -214,7 +207,7 @@ if (defined $create)
 
     if ( create_certificate( $hostname, $organization, $unit, $certfile, $keyfile, $combinedfile ) )
     {
-        print "Successfully created certificate.\n";
+        print "Successfully created certificate.\n" if $verbose;
         exit 0;
     }
     else
@@ -237,7 +230,7 @@ else
             }
             else
             {
-                print STDERR "File does not exist: $F\n";
+                print STDERR "File does not exist: $F\n" if $verbose;
                 $exitcode = 1;
             }
         }

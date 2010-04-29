@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr 29 18:39:04 CEST 2010 - jdsn@suse.de
+
+- be less verbose by default, add verbose mode (bnc#600829)
+- use secure umask to prevent race conditions
+- 0.5 
+
+-------------------------------------------------------------------
 Tue Mar 30 12:37:22 CEST 2010 - jdsn@suse.de
 
 - fix hostname identification (bnc#592217)
