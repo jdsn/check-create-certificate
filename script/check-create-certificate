@@ -29,7 +29,7 @@ umask 0177;
 sub usage
 {
     print STDERR "\n";
-    print STDERR "usage: $0 [--create] [--force] [--path <path>] [--hostname <name>]\n";
+    print STDERR "usage: $0 [--create] [--force] [--hostname <name>]\n";
     print STDERR "       $0 --help\n";
     print STDERR "\n";
     print STDERR "  Check for and create a 2048 bit rsa SSL certificate, key file and optionally a combined file.\n";
