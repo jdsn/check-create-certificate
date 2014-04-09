@@ -1,7 +1,7 @@
 #
 # spec file for package check-create-certificate
 #
-# Copyright 2010 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2010-2014 SUSE LINUX Products GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,26 +12,26 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# norootforbuild 
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
 
 
 Name:           check-create-certificate
 Version:        0.5
 Release:        0
-License:        GPLv2
-Group:          Productivity/Networking/System
 Summary:        A non-interactive script that creates an SSL certificate if it does not exist
-Url:            http://gitorious.org/server-administration/check-create-certificate
-
-Requires:       perl perl-base
-Requires:       openssl
-
-BuildRequires:  coreutils
-BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+License:        GPL-2.0
+Group:          Productivity/Networking/System
+Url:            http://github.com/jdsn/check-create-certificate
 
 Source:         %{name}-%{version}.tar.bz2
+BuildRequires:  coreutils
+Requires:       openssl
+Requires:       perl
+Requires:       perl-base
 
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildArch:      noarch
 
 %description
 A script that checks for the existance of an SSL certificate or creates a new self signed one.
@@ -41,7 +41,6 @@ Authors:
 --------
     J. Daniel Schmidt <jdsn@suse.de>
 
-
 %prep
 
 %setup -q
@@ -49,17 +48,15 @@ Authors:
 %build
 
 %install
-    mkdir -p ${RPM_BUILD_ROOT}/usr/sbin
-    install -m 755 script/%{name} ${RPM_BUILD_ROOT}/usr/sbin/
-    mkdir -p ${RPM_BUILD_ROOT}/%{_docdir}/%{name}
-    install -m 644 COPYING ${RPM_BUILD_ROOT}/%{_docdir}/%{name}/
-
-%clean
-    rm -rf ${RPM_BUILD_ROOT}
-
+mkdir -p %{buildroot}%{_prefix}/sbin
+install -m 755 script/%{name} %{buildroot}%{_sbindir}/
+mkdir -p %{buildroot}/%{_docdir}/%{name}
+install -m 644 COPYING %{buildroot}/%{_docdir}/%{name}/
 
 %files
 %defattr(-,root,root)
-%attr(0755,root,root) /usr/sbin/%{name}
+%attr(0755,root,root) %{_sbindir}/%{name}
 %dir %{_docdir}/%{name}
 %doc %{_docdir}/%{name}/*
+
+%changelog
