@@ -91,7 +91,7 @@ emailAddress = root\@$fqdn
     chomp $CNF;
     chomp $CERT;
     chomp $KEY;
-    if ( (not defined $CNF ) || $CNF   =~ /^$/  || 
+    if ( (not defined $CNF ) || $CNF   =~ /^$/  ||
          (not defined $CERT) || $CERT  =~ /^$/  ||
          (not defined $KEY ) || $KEY   =~ /^$/     )
     {
@@ -104,7 +104,7 @@ emailAddress = root\@$fqdn
     print CONF $config;
     close CONF;
 
-    my @OPENSSLCMD = ("openssl", "req", "-newkey", "rsa:2048", "-x509", "-nodes", "-days", "1095", "-batch", "-config", "$CNF", "-out", "$CERT", "-keyout", "$KEY");
+    my @OPENSSLCMD = ("openssl", "req", "-newkey", "rsa:2048", "-sha256", "-x509", "-nodes", "-days", "1095", "-batch", "-config", "$CNF", "-out", "$CERT", "-keyout", "$KEY");
     if ( system(@OPENSSLCMD) == 0 )
     {
         my $COMBINEDPATH = "";
@@ -127,7 +127,7 @@ emailAddress = root\@$fqdn
         system($rmtemp);
 
         # run c_rehash in the certificate directories
-        my $CERTPATH     = dirname($CERTFILE); 
+        my $CERTPATH     = dirname($CERTFILE);
         system("c_rehash $COMBINEDPATH >/dev/null 2>&1") if defined $COMBINEDFILE;
         system("c_rehash $CERTPATH >/dev/null 2>&1") if ( defined $CERTPATH  &&  $COMBINEDPATH ne $CERTPATH );
     }
@@ -181,7 +181,7 @@ if (defined $create)
             if ( defined $F  &&  -e $F )
             {
                 print "File already exists: $F\n" if $verbose;
-                $ok = 0; 
+                $ok = 0;
             }
         }
         unless ( $ok == 1 )
