@@ -24,7 +24,8 @@ License:        GPL-2.0
 Group:          Productivity/Networking/System
 Url:            http://github.com/jdsn/check-create-certificate
 
-Source:         %{name}-%{version}.tar.bz2
+Source0:        check-create-certificate
+Source1:        COPYING
 BuildRequires:  coreutils
 Requires:       openssl >= 1.1.1
 Requires:       perl
@@ -43,13 +44,11 @@ Authors:
 
 %prep
 
-%setup -q
-
 %build
 
 %install
 mkdir -p %{buildroot}%{_prefix}/sbin
-install -m 755 script/%{name} %{buildroot}%{_sbindir}/
+install -m 755 %{name} %{buildroot}%{_sbindir}/
 mkdir -p %{buildroot}/%{_docdir}/%{name}
 install -m 644 COPYING %{buildroot}/%{_docdir}/%{name}/
 
