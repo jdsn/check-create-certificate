@@ -48,9 +48,9 @@ Authors:
 
 %install
 mkdir -p %{buildroot}%{_prefix}/sbin
-install -m 755 %{name} %{buildroot}%{_sbindir}/
+install -m 755 %{SOURCE0} %{buildroot}%{_sbindir}/
 mkdir -p %{buildroot}/%{_docdir}/%{name}
-install -m 644 COPYING %{buildroot}/%{_docdir}/%{name}/
+install -m 644 %{SOURCE1} %{buildroot}/%{_docdir}/%{name}/
 
 %files
 %defattr(-,root,root)
