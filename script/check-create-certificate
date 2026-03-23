@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # check-create-certificate: Create a self-signed 2048 bit RSA SSL certificate if it does not exist yet
-# Copyright (C) 2009,2010  J. Daniel Schmidt <jdsn@suse.de>
+# Copyright (C) 2009,2010,2026  J. Daniel Schmidt <jdsn@suse.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-
-
-
 use strict;
 use Getopt::Long qw(:config no_ignore_case);;
 use File::Basename;
@@ -32,7 +29,7 @@ sub usage
     print STDERR "usage: $0 [--create] [--force] [--hostname <name>]\n";
     print STDERR "       $0 --help\n";
     print STDERR "\n";
-    print STDERR "  Check for and create a 2048 bit rsa SSL certificate, key file and optionally a combined file.\n";
+    print STDERR "  Check for and create an SSL certificate, key file and optionally a combined file.\n";
     print STDERR "  Target issue: non-interactively create a certificate for any kind of a webservice or webserver.\n";
     print STDERR "\n";
     print STDERR "Options:\n";
@@ -41,6 +38,10 @@ sub usage
     print STDERR "  -f [--force]                force to overwrite certificate\n";
     print STDERR "  -h [--help]                 this help\n";
     print STDERR "  -v [--verbose]              show status messages (by default no output will be printed)\n";
+    print STDERR "  -A [--algorithm]    <algo>  sets the openssl algorithm to be used for the private key\n";
+    print STDERR "                              defaults to 'ed25519'\n";
+    print STDERR "  -Y [--days]         <days>  defines how how many days the certificate should be valid\n";
+    print STDERR "                              defaults to '360' as browsers start to block long lived certificates.\n";
     print STDERR "  -H [--hostname]     <name>  defines hostname to use as CN for certificate\n";
     print STDERR "                              if omitted it will use the FQDN hostname or just the hostname or the default CN\n";
     print STDERR "  -D [--defaultcn]    <name>  defines the default CN that is used if no FQDN can be found\n";
@@ -57,9 +58,11 @@ sub usage
 }
 
 
-sub create_certificate($$$$$$)
+sub create_certificate($$$$$$$$)
 {
     my $fqdn         = shift || return undef;
+    my $algorithm    = shift || 'ed25519';
+    my $days         = shift || 360;
     my $org          = shift || '';
     my $orgunit      = shift || '';
     my $CERTFILE     = shift || return undef;
@@ -104,7 +107,7 @@ emailAddress = root\@$fqdn
     print CONF $config;
     close CONF;
 
-    my @OPENSSLCMD = ("openssl", "req", "-newkey", "rsa:2048", "-x509", "-nodes", "-days", "1095", "-batch", "-config", "$CNF", "-out", "$CERT", "-keyout", "$KEY");
+    my @OPENSSLCMD = ("openssl", "req", "-newkey", $algorithm, "-x509", "-nodes", "-days", "${days}", "-batch", "-config", "$CNF", "-out", "$CERT", "-keyout", "$KEY");
     if ( system(@OPENSSLCMD) == 0 )
     {
         my $COMBINEDPATH = "";
@@ -143,14 +146,16 @@ emailAddress = root\@$fqdn
 
 ################################# MAIN ########################################
 
-my ($create, $force, $verbose, $hostname, $certfile, $keyfile, $combinedfile, $help, $organization, $unit, $defaultcn);
+my ($create, $force, $verbose, $hostname, $algorithm, $certfile, $keyfile, $combinedfile, $help, $organization, $unit, $days, $defaultcn);
 my $result = GetOptions ("create|c"         => \$create,
                          "force|f"          => \$force,
                          "verbose|v"        => \$verbose,
                          "hostname|H=s"     => \$hostname,
+                         "algorithm|A=s"    => \$algorithm,
                          "defaultcn|D=s"    => \$defaultcn,
                          "organization|O=s" => \$organization,
                          "unit|U=s"         => \$unit,
+                         "days|Y=i"         => \$days,
                          "certfile|C=s"     => \$certfile,
                          "keyfile|K=s"      => \$keyfile,
                          "combinedfile|B=s" => \$combinedfile,
@@ -205,7 +210,7 @@ if (defined $create)
     }
     $hostname = 'localhost' unless ( defined $hostname && $hostname !~ /^$/ );
 
-    if ( create_certificate( $hostname, $organization, $unit, $certfile, $keyfile, $combinedfile ) )
+    if ( create_certificate( $hostname, $algorithm, $days, $organization, $unit, $certfile, $keyfile, $combinedfile ) )
     {
         print "Successfully created certificate.\n" if $verbose;
         exit 0;

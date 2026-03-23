@@ -17,7 +17,7 @@
 
 
 Name:           check-create-certificate
-Version:        0.5
+Version:        0.6
 Release:        0
 Summary:        A non-interactive script that creates an SSL certificate if it does not exist
 License:        GPL-2.0
@@ -26,7 +26,7 @@ Url:            http://github.com/jdsn/check-create-certificate
 
 Source:         %{name}-%{version}.tar.bz2
 BuildRequires:  coreutils
-Requires:       openssl
+Requires:       openssl >= 1.1.1
 Requires:       perl
 Requires:       perl-base
 
